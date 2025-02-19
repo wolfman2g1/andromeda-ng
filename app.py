@@ -4,6 +4,10 @@ from loguru import logger
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Request
 from service.settings import config
+from service.database import get_db
+
+## Routes
+from service.ping import router as ping_router
 
 def configure_app():
     logger.info(f"Using Config ${config.ENV}")
@@ -15,6 +19,12 @@ def configure_app():
         allow_methods=["*"],
         allow_headers=["*"]
     )
+    @app.on_event("startup")
+    async def connect_to_db():
+        logger.info("Connecting to database")
+        await get_db()
+
+    app.include_router(ping_router)
     return app
 
 if __name__ == "__main__":
