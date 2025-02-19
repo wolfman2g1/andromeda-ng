@@ -4,6 +4,7 @@ from pydantic_settings import BaseSettings
 from pydantic import SecretStr
 
 class Settings(BaseSettings):
+    SERVICE_NAME: str
     ENV: str
     DB_HOST: str
     DB_USER: str

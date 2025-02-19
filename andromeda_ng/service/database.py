@@ -1,10 +1,11 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-from service.settings import config
+from andromeda_ng.service.settings import config
+from typing import Generator
+from sqlalchemy.orm import Session
 
-
-SQLALCHEMY_DATABASE_URL = f"postgresql://{config.DB_USER}:{config.DB_PASS.get_secret_value()}@{config.DB_HOST}:{config.DB_PORT}/{config.DB_NAME}"
+SQLALCHEMY_DATABASE_URL = f"postgresql+psycopg2://{config.DB_USER}:{config.DB_PASS.get_secret_value()}@{config.DB_HOST}:{config.DB_PORT}/{config.DB_NAME}"
 
 
 engine = create_engine(
@@ -16,7 +17,7 @@ SessionLocal = sessionmaker(
 Base = declarative_base()
 
 
-def get_db():
+def get_db()  -> Generator[Session, None, None]:
     db = SessionLocal()
     try:
         yield db
