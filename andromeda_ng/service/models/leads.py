@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime
 from sqlalchemy.sql import func
-from andromeda_ng.service.database import Base
+from andromeda_ng.service.base import Base
 
 class Lead(Base):
     __tablename__ = "leads"

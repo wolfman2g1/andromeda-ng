@@ -4,6 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from andromeda_ng.service.settings import config
 from typing import Generator
 from sqlalchemy.orm import Session
+from andromeda_ng.service.base import Base
 
 SQLALCHEMY_DATABASE_URL = f"postgresql+psycopg2://{config.DB_USER}:{config.DB_PASS.get_secret_value()}@{config.DB_HOST}:{config.DB_PORT}/{config.DB_NAME}"
 
