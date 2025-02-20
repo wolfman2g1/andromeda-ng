@@ -10,7 +10,7 @@ python = "^3.10"
 fastapi = "^0.115.8"
 uvicorn = "^0.34.0"
 requests = "^2.32.3"
-pydantic = "^2.10.6"
+pydantic = {extras = ["email"], version = "^2.10.6"}
 pydantic-settings = "^2.7.1"
 loguru = "^0.7.3"
 sqlalchemy = "^2.0.38"
@@ -23,6 +23,9 @@ psycopg2-binary = "^2.9.10"
 
 
 [tool.poetry.dev-dependencies]
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.4"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

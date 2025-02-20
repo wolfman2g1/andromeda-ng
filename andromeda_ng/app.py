@@ -7,6 +7,7 @@ from alembic.config import Config
 from .service.database import get_db
 from .service.settings import config
 from .service.ping import router as ping_router
+from andromeda_ng.service.api.routes import leads
 
 def configure_app():
     logger.info(f"Using Config {config.ENV}")
@@ -45,6 +46,7 @@ def configure_app():
                 logger.error(f"Error closing session: {e}")
 
     app.include_router(ping_router)
+    app.include_router(leads.router)
     return app
 
 # Create the app instance

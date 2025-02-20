@@ -1,11 +1,12 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime
+from sqlalchemy import Column, UUID, String, Boolean, DateTime
 from sqlalchemy.sql import func
 from andromeda_ng.service.base import Base
+import uuid
 
 class Lead(Base):
     __tablename__ = "leads"
     
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4)
     lead_first_name = Column(String, nullable=False, index=True)
     lead_last_name = Column(String, nullable=False, index=True)
     lead_email = Column(String, nullable=False, index=True)
