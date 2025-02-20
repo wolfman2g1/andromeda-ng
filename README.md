@@ -6,7 +6,8 @@ I run an extremely small MSP. I'm trying to run it as lean and mean as possible 
 
 ## tech stack
 - fastapi
-- mongodb
+~~- mongodb~~
+- postgres
 - zamand
 - tactical RMM
 - Ninja Invoice
