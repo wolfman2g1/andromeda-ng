@@ -19,6 +19,7 @@ class Customer(Base):
     customer_website = Column(String, index=True)
     is_active = Column(Boolean, default=True)
     children = relationship("Contact", back_populates="customer")
+    notes = relationship("Note", back_populates="customer")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 

@@ -109,6 +109,23 @@ class LeadOutput(BaseModel):
         from_attributes = True
 
 
+class NoteSchema(BaseModel):
+    note_title: str
+    note_content: str
+    customer_id: UUID
+
+    class Config:
+        from_attributes = True
+
+
+class NoteOutput(BaseModel):
+    id: UUID
+    note_title: str
+    note_content: str
+    customer_id: UUID
+    created_at: datetime
+
+
 CustomerOutput.model_rebuild()
 ContactOutput.model_rebuild()
 CustomerBasic.model_rebuild()

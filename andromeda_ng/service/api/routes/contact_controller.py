@@ -3,7 +3,7 @@ from typing import List, Optional
 from loguru import logger
 import uuid
 from andromeda_ng.service.schema import ContactSchema, ContactOutput
-from andromeda_ng.service.crud import contact_service
+from andromeda_ng.service.crud import contact_service, customer_service
 from andromeda_ng.service.database import get_db
 
 router = APIRouter(prefix="/api/v1/contacts", tags=["contacts"])
@@ -13,17 +13,20 @@ router = APIRouter(prefix="/api/v1/contacts", tags=["contacts"])
 async def create_contact(contact_data: ContactSchema, db=Depends(get_db)):
     try:
 
-        if not contact:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="Please check your input data")
-        check_company = await contact_service.read_customer_by_id(db, contact_data.customer_id)
-        if not check_company:
+        # check if customer exists
+        check_customer = customer_service.read_customer_by_id(
+            db, contact_data.customer_id)
+        if not check_customer:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Customer not found")
-        if not contact.customer_id:
+        if not contact_data.customer_id:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, detail="Please provide a valid customer id")
         contact_data.contact_email = contact_data.contact_email.lower()
+        check_contact = await contact_service.read_contact_by_email(db, contact_data.contact_email)
+        if check_contact:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Contact already exists")
         contact = await contact_service.create_contact(db, contact_data)
 
         logger.info(f"Contact created: {contact.id}")
