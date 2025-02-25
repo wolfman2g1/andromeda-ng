@@ -11,6 +11,15 @@ class Settings(BaseSettings):
     DB_PASS: SecretStr
     DB_NAME: str
     DB_PORT: Optional[str] = 5432
+
+    ## testing settings
+    TEST_DB_HOST: Optional[str] 
+    TEST_DB_USER: Optional[str] 
+    TEST_DB_PASS: Optional[SecretStr]
+    TEST_DB_NAME: Optional[str]
+    TEST_DB_PORT: Optional[str] = 5432
+
+    ## production settings
     
     
     class Config:

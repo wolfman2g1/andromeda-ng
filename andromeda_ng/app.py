@@ -7,6 +7,8 @@ from alembic.config import Config
 from .service.database import get_db
 from .service.settings import config
 from .service.ping import router as ping_router
+from andromeda_ng.service.api.routes import leads_controller, customers_controller, contact_controller
+
 
 def configure_app():
     logger.info(f"Using Config {config.ENV}")
@@ -28,7 +30,7 @@ def configure_app():
             alembic_cfg = Config("alembic.ini")
             command.upgrade(alembic_cfg, "head")
             logger.info("Database migrations complete.")
-            
+
             # Establish Database Connection
             logger.info("Connecting to database...")
             db_gen = get_db()
@@ -45,7 +47,11 @@ def configure_app():
                 logger.error(f"Error closing session: {e}")
 
     app.include_router(ping_router)
+    app.include_router(leads_controller.router)
+    app.include_router(customers_controller.router)
+    app.include_router(contact_controller.router)
     return app
+
 
 # Create the app instance
 app = configure_app()
@@ -54,4 +60,5 @@ app = configure_app()
 if __name__ == "__main__":
     import uvicorn
     logger.info(f"Starting {config.SERVICE_NAME}")
-    uvicorn.run("andromeda_ng.app:app", host="0.0.0.0", reload=True, log_level="debug")
+    uvicorn.run("andromeda_ng.app:app", host="0.0.0.0",
+                reload=True, log_level="debug")
