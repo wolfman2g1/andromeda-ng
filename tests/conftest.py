@@ -1,35 +1,51 @@
 # conftest.py
-from unittest.mock import MagicMock, create_autospec
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy.orm import Session
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
 from andromeda_ng.app import configure_app
-from andromeda_ng.service.database import get_db
-from sqlalchemy.orm.query import Query 
-@pytest.fixture
-def mock_db_session():
-    # Create a more detailed mock session
-    session = create_autospec(Session)
-    mock_query = create_autospec(Query)
-    session.query.return_value = mock_query
-    
-    # Configure the mock to track calls and return values
-    session.add = MagicMock()
-    session.commit = MagicMock()
-    session.refresh = MagicMock()
+from andromeda_ng.service.database import get_db, Base
 
+# Create SQLite in-memory database for testing
+SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
+
+@pytest.fixture(scope="function")
+def test_db():
+    # Create the SQLite engine with special configurations for testing
+    engine = create_engine(
+        SQLALCHEMY_DATABASE_URL,
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
     
-    return session
+    # Create all tables in the database
+    Base.metadata.create_all(bind=engine)
+    
+    # Create a new session factory
+    TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    
+    # Create a new database session for the test
+    db = TestingSessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+        # Drop all tables after the test
+        Base.metadata.drop_all(bind=engine)
 
 @pytest.fixture
-def test_app(mock_db_session):
+def test_app(test_db):
     app = configure_app()
     
     # Override the database dependency
     def override_get_db():
-        yield mock_db_session
-        
+        try:
+            yield test_db
+        finally:
+            test_db.close()
+    
     app.dependency_overrides[get_db] = override_get_db
     return app
 

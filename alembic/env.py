@@ -6,7 +6,7 @@ from logging.config import fileConfig
 from alembic import context
 from dotenv import load_dotenv
 from andromeda_ng.service.base import Base
-from andromeda_ng.service.models import Lead
+from andromeda_ng.service.models import Lead, Customer, Contact
 load_dotenv()
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
