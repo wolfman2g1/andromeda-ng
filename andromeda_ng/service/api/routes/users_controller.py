@@ -5,7 +5,7 @@ import uuid
 from andromeda_ng.service.schema import UserOutput, UserSchema
 from andromeda_ng.service.crud import user_service
 from andromeda_ng.service.database import get_db
-
+from andromeda_ng.service.utils import passwords
 router = APIRouter(prefix="/api/v1/users", tags=["users"])
 
 
@@ -18,6 +18,12 @@ async def create_user(user_data: UserSchema, db=Depends(get_db)):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST, detail="Username already exists")
         user_data.username = username
+        # chec password policy
+        valid_password = passwords.verify_password_policy(
+            user_data.password)
+        if not valid_password:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Password does not meet policy requirements")
         user = await user_service.create_user(db, user_data)
         return user
     except Exception as e:

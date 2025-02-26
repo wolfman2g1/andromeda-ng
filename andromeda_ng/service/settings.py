@@ -13,12 +13,21 @@ class Settings(BaseSettings):
     DB_USER: str
     DB_PASS: SecretStr
     DB_NAME: str
-    DB_PORT: Optional[str] = 5432
+    DB_PORT: Optional[int] = 5432
     SECRET_KEY: SecretStr
     ACCESS_TOKEN_EXPIRATION_MINUTES: int = 30
     ALGORITHM: str = "HS256"
     REFRESH_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_SECRET_KEY: SecretStr
+
+    MAIL_USERNAME: Optional[str] = None
+    MAIL_PASSWORD: Optional[SecretStr] = None
+    MAIL_SERVER: Optional[str] = None
+    MAIL_PORT: Optional[int] = 587
+    MAIL_USE_TLS: bool = True
+    MAIL_FROM: Optional[str] = None
+    MAIL_CREDENTIALS: Optional[bool] = True
+    FRONTEND_URL: Optional[str] = None
 
     # testing settings
     TEST_DB_HOST: Optional[str]

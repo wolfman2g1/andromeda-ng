@@ -101,3 +101,18 @@ async def get_user_by_id_(db: Session, user_id: uuid.UUID):
     except Exception as e:
         logger.error(f"Error getting user: {e}")
         return None
+
+
+async def update_user_password(db: Session, user_id: uuid.UUID, password: str) -> bool:
+    try:
+        user = db.query(User).filter(User.id == user_id).first()
+        if not user:
+            return {"error": "User not found"}
+        user.hashed_password = password
+        db.commit()
+        logger.info(f"User password updated: {user_id}")
+        return True
+    except Exception as e:
+        logger.error(f"Error updating user password: {e}")
+        db.rollback()
+        return None

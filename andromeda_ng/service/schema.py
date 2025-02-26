@@ -163,12 +163,21 @@ class TokenData(BaseModel):
 
 class Token(BaseModel):
     access_token: str
-    id: str
+    refresh_token: str
+    token_type: str
+    username: str
+    admin: bool
 
 
 class Login(BaseModel):
     username: str
     password: str
+
+
+class PasswordResetRequest(BaseModel):
+    """Schema for password reset request"""
+    token: str
+    new_password: str
 
 
 CustomerOutput.model_rebuild()

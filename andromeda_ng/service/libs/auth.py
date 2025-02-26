@@ -31,16 +31,22 @@ def create_access_token(data: dict) -> str:
 def verify_access_token(token: str, credentials_exception: HTTPException) -> TokenData:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("name")
+        username: str = payload.get("username")
         user_id: str = payload.get("sub")
         admin: bool = payload.get("admin")
 
         if not user_id:
             raise credentials_exception
 
+        try:
+            user_uuid = UUID(user_id)
+        except ValueError as e:
+            logger.error(f"Invalid UUID: {e}")
+            raise credentials_exception
+
         token_data = TokenData(
             username=username,
-            id=UUID(user_id),
+            id=user_uuid,
             admin=admin
         )
         return token_data
@@ -78,3 +84,36 @@ async def get_current_user(token: str = Depends(oauth2_scheme)) -> TokenData:
         headers={"WWW-Authenticate": "Bearer"}
     )
     return verify_access_token(token, credentials_exception)
+
+
+def create_password_reset_token(user_id: str) -> str:
+    """
+    Create a password reset token with longer expiration
+    and different payload structure than regular JWT
+    """
+    expire = datetime.now(timezone.utc) + timedelta(hours=24)
+    to_encode = {
+        "exp": expire,
+        "sub": str(user_id),
+        "type": "password_reset"  # Token type identifier
+    }
+    encoded_jwt = jwt.encode(
+        to_encode,
+        SECRET_KEY,  # You could also use a separate secret for reset tokens
+        algorithm=ALGORITHM
+    )
+    return encoded_jwt
+
+
+def verify_password_reset_token(token: str) -> Optional[str]:
+    """
+    Verify password reset token and return user_id if valid
+    """
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        if payload.get("type") != "password_reset":
+            return None
+        return payload.get("sub")
+    except JWTError as e:
+        logger.error(f"Password reset token verification failed: {e}")
+        return None
