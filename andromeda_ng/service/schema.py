@@ -126,6 +126,51 @@ class NoteOutput(BaseModel):
     created_at: datetime
 
 
+### User Schema ###
+class UserSchema(BaseModel):
+    username: str
+    email: EmailStr
+    first_name: str
+    last_name: str
+    password: str  # NOT HASHED IN SCHEMA STILL PLAIN TEXT
+    admin: bool
+    is_active: bool = False
+
+    class Config:
+        from_attributes = True
+
+
+class UserOutput(BaseModel):
+    id: UUID
+    username: str
+    email: EmailStr
+    first_name: str
+    last_name: str
+    admin: bool
+    is_active: bool
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class TokenData(BaseModel):
+    username: str
+    id: UUID
+    admin: bool
+
+
+class Token(BaseModel):
+    access_token: str
+    id: str
+
+
+class Login(BaseModel):
+    username: str
+    password: str
+
+
 CustomerOutput.model_rebuild()
 ContactOutput.model_rebuild()
 CustomerBasic.model_rebuild()
