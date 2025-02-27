@@ -72,6 +72,11 @@ class CustomerOutput(BaseModel):
     created_at: datetime
     updated_at: Optional[datetime] = None
     children: Optional[List["ContactOutput"]] = None
+    notes: Optional[List["NoteOutput"]] = None
+    customer_tickets: Optional[dict] = None
+    ticket_count: Optional[int] = None
+    open_tickets: Optional[int] = None
+    ticket_url: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -178,6 +183,15 @@ class PasswordResetRequest(BaseModel):
     """Schema for password reset request"""
     token: str
     new_password: str
+
+
+class ZammadCompany(BaseModel):
+    name: str
+    shared: bool = False
+    domain: Optional[str] = None
+    domain_assignment: Optional[str] = None
+    note: Optional[str] = None
+    vip: bool = False
 
 
 CustomerOutput.model_rebuild()

@@ -1566,7 +1566,21 @@ files = [
 [package.extras]
 dev = ["black (>=19.3b0)", "pytest (>=4.6.2)"]
 
+[[package]]
+name = "zammad-py"
+version = "3.0.0"
+description = "Python API client for zammad"
+optional = false
+python-versions = ">=3.8.1,<4.0"
+files = [
+    {file = "zammad_py-3.0.0-py3-none-any.whl", hash = "sha256:59af11dec42b4edf16ea4d538cc3fa07bc47cf7efebdca214d21c6c5bf4a6e2f"},
+    {file = "zammad_py-3.0.0.tar.gz", hash = "sha256:acd770cf98721536ccc88de9461cf8be04e1c30f8def400ae8825f0e8ebe6a72"},
+]
+
+[package.dependencies]
+requests = ">=2.25.1,<3.0.0"
+
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "4c6c852a65e2fac3a49ff782e3d3ee84ea7e0e0182c59e66ae4d59a666738242"
+content-hash = "abe42445f0de89736b8ce464813225fec58fd34d5779f6906e1608de282ff92b"

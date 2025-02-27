@@ -29,6 +29,10 @@ class Settings(BaseSettings):
     MAIL_CREDENTIALS: Optional[bool] = True
     FRONTEND_URL: Optional[str] = None
 
+    # Zammad settings
+    ZAMMAD_URL: Optional[str] = None
+    ZAMMAD_TOKEN: Optional[SecretStr] = None
+
     # testing settings
     TEST_DB_HOST: Optional[str]
     TEST_DB_USER: Optional[str]
