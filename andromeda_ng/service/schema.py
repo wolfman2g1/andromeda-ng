@@ -189,7 +189,7 @@ class ZammadCompany(BaseModel):
     name: str
     shared: bool = False
     domain: Optional[str] = None
-    domain_assignment: Optional[str] = None
+    domain_assignment: Optional[str] = True
     note: Optional[str] = None
     vip: bool = False
 

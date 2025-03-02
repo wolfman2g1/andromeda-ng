@@ -62,3 +62,32 @@ async def get_company_tickets(company_id: int) -> dict:
     except Exception as e:
         logger.error(f"Error getting tickets: {e}")
         return None
+
+
+async def create_user(user: dict, zammad_id: int) -> dict:
+    """Create a new user in Zammad
+    Parameters for user creation:
+    - login: str(email address)
+    - firstname: str
+    - lastname: str
+    - email: str
+    - password: str(optional)
+    - phone: str(optional)
+    - organization_id: int(optional)
+    - roles: List[str](optional, defaults to["Customer"])
+    - active: bool(optional, defaults to true)
+"""
+    try:
+        logger.info(f"Creating user {user['email']}")
+        # Use ZammadAPI client to create user
+
+        result = client.user.create(
+            params=user
+        )
+        if result:
+            logger.info(f"User {user['email']} created successfully")
+            return result
+        return None
+    except Exception as e:  # pragma: no cover
+        logger.error(f"Error creating user: {e}")
+        return None

@@ -106,7 +106,20 @@ async def convert_lead_to_customer(db: Session, lead_id: uuid.UUID):
         customer = await zammad.create_organization(zammad_org)
         if not customer:
             return {"error": "Error creating organization in Zammad"}
-
+        # zammad user creation
+        user = {
+            "login": lead.lead_email,
+            "firstname": lead.lead_first_name,
+            "lastname": lead.lead_last_name,
+            "email": lead.lead_email,
+            "phone": lead.lead_phone,
+            "organization_id": customer["id"],
+            "roles": ["Customer"],
+            "active": True
+        }
+        zammad_user = await zammad.create_user(user, customer["id"])
+        if not zammad_user:
+            return {"error": "Error creating user in Zammad"}
         # Update lead status
         lead.lead_converted = True
         db.commit()
