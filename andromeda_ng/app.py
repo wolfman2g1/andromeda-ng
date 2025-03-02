@@ -7,7 +7,7 @@ from alembic.config import Config
 from .service.database import get_db
 from .service.settings import config
 from .service.ping import router as ping_router
-from andromeda_ng.service.api.routes import leads_controller, customers_controller, contact_controller
+from andromeda_ng.service.api.routes import leads_controller, customers_controller, contact_controller, notes_controller, users_controller, auth_controller
 
 
 def configure_app():
@@ -50,6 +50,9 @@ def configure_app():
     app.include_router(leads_controller.router)
     app.include_router(customers_controller.router)
     app.include_router(contact_controller.router)
+    app.include_router(notes_controller.router)
+    app.include_router(users_controller.router)
+    app.include_router(auth_controller.router)
     return app
 
 

@@ -72,6 +72,11 @@ class CustomerOutput(BaseModel):
     created_at: datetime
     updated_at: Optional[datetime] = None
     children: Optional[List["ContactOutput"]] = None
+    notes: Optional[List["NoteOutput"]] = None
+    customer_tickets: Optional[dict] = None
+    ticket_count: Optional[int] = None
+    open_tickets: Optional[int] = None
+    ticket_url: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -107,6 +112,86 @@ class LeadOutput(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class NoteSchema(BaseModel):
+    note_title: str
+    note_content: str
+    customer_id: UUID
+
+    class Config:
+        from_attributes = True
+
+
+class NoteOutput(BaseModel):
+    id: UUID
+    note_title: str
+    note_content: str
+    customer_id: UUID
+    created_at: datetime
+
+
+### User Schema ###
+class UserSchema(BaseModel):
+    username: str
+    email: EmailStr
+    first_name: str
+    last_name: str
+    password: str  # NOT HASHED IN SCHEMA STILL PLAIN TEXT
+    admin: bool
+    is_active: bool = False
+
+    class Config:
+        from_attributes = True
+
+
+class UserOutput(BaseModel):
+    id: UUID
+    username: str
+    email: EmailStr
+    first_name: str
+    last_name: str
+    admin: bool
+    is_active: bool
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class TokenData(BaseModel):
+    username: str
+    id: UUID
+    admin: bool
+
+
+class Token(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str
+    username: str
+    admin: bool
+
+
+class Login(BaseModel):
+    username: str
+    password: str
+
+
+class PasswordResetRequest(BaseModel):
+    """Schema for password reset request"""
+    token: str
+    new_password: str
+
+
+class ZammadCompany(BaseModel):
+    name: str
+    shared: bool = False
+    domain: Optional[str] = None
+    domain_assignment: Optional[str] = True
+    note: Optional[str] = None
+    vip: bool = False
 
 
 CustomerOutput.model_rebuild()

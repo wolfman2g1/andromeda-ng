@@ -85,7 +85,7 @@ async def read_contact_by_email(db: Session, contact_email: str):
             Contact.contact_email == contact_email).first()
         if not contact:
             logger.error(f"Contact not found with email: {contact_email}")
-            return {"error": "Contact not found"}
+            return False
         logger.info(
             f"Found contact by email: {contact_email} - {contact.id} ({contact.contact_name})")
         return contact

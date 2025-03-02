@@ -1,4 +1,4 @@
-from sqlalchemy import Column, UUID, String, DateTime, ForeignKey, Boolean
+from sqlalchemy import Column, UUID, Integer, String, DateTime, ForeignKey, Boolean
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from andromeda_ng.service.base import Base
@@ -19,6 +19,8 @@ class Customer(Base):
     customer_website = Column(String, index=True)
     is_active = Column(Boolean, default=True)
     children = relationship("Contact", back_populates="customer")
+    notes = relationship("Note", back_populates="customer")
+    zammad_id = Column(Integer, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
