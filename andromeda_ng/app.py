@@ -4,10 +4,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from alembic import command
 from alembic.config import Config
-from .service.database import get_db
+from .service.database import get_db, engine
 from .service.settings import config
 from .service.ping import router as ping_router
 from andromeda_ng.service.api.routes import leads_controller, customers_controller, contact_controller, notes_controller, users_controller, auth_controller
+from andromeda_ng.service.utils.telemetry import configure_telemetry
 
 
 def configure_app():
@@ -21,6 +22,17 @@ def configure_app():
         allow_headers=["*"]
     )
 
+    # Configure OpenTelemetry if enabled
+    telemetry = configure_telemetry(app=app, db_engine=engine)
+    app.state.telemetry = telemetry
+
+    if telemetry.get("enabled", False):
+        logger.info(
+            f"OpenTelemetry is enabled. Exporting to Tempo: {config.TEMPO_ENDPOINT}, Loki: {config.LOKI_ENDPOINT}")
+    else:
+        logger.info(
+            "OpenTelemetry is disabled. Set TELEMETRY_ENABLED=True to enable.")
+
     @app.on_event("startup")
     async def startup_event():
         logger.info("Starting application...")
@@ -30,7 +42,6 @@ def configure_app():
             alembic_cfg = Config("alembic.ini")
             command.upgrade(alembic_cfg, "head")
             logger.info("Database migrations complete.")
-
             # Establish Database Connection
             logger.info("Connecting to database...")
             db_gen = get_db()
@@ -45,6 +56,24 @@ def configure_app():
                 logger.info("Database session closed")
             except Exception as e:
                 logger.error(f"Error closing session: {e}")
+
+    @app.on_event("shutdown")
+    async def shutdown_event():
+        logger.info("Shutting down application...")
+        # Force flush any pending telemetry data
+        if hasattr(app.state, "telemetry"):
+            try:
+                trace_provider = app.state.telemetry.get("trace_provider")
+                if trace_provider:
+                    trace_provider.shutdown()
+
+                logger_provider = app.state.telemetry.get("logger_provider")
+                if logger_provider:
+                    logger_provider.shutdown()
+
+                logger.info("Telemetry shutdown complete")
+            except Exception as e:
+                logger.error(f"Error during telemetry shutdown: {e}")
 
     app.include_router(ping_router)
     app.include_router(leads_controller.router)

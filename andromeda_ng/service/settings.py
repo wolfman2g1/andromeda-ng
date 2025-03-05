@@ -33,6 +33,11 @@ class Settings(BaseSettings):
     ZAMMAD_URL: Optional[str] = None
     ZAMMAD_TOKEN: Optional[SecretStr] = None
 
+    # telemetry settings
+    TEMPO_ENDPOINT: Optional[str]
+    LOKI_ENDPOINT: Optional[str]
+    TELEMETRY_ENABLED: bool = False
+
     # testing settings
     TEST_DB_HOST: Optional[str]
     TEST_DB_USER: Optional[str]

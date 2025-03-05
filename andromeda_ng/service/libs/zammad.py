@@ -10,7 +10,7 @@ oath_token = config.ZAMMAD_TOKEN
 headers = {
     "Authorization": f"Bearer {oath_token}",
     "Content-Type": "application/json"}
-client = ZammadAPI(url, oath_token)
+client = ZammadAPI(url=url, oauth2_token=oath_token)
 
 
 async def create_organization(company: ZammadCompany) -> dict:
